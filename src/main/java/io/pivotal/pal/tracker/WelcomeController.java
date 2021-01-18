@@ -8,7 +8,6 @@ public class WelcomeController {
 
     @GetMapping("/")
     public String sayHello() {
-        String message = System.getenv(WELCOME_MESSAGE);
-        return message;
+        return "hello";
     }
 }
