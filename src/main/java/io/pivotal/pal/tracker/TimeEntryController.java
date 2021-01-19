@@ -7,40 +7,47 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 
-public class TimeEntryController{
-    private TimeEntryRepository repository;
+@RestController
+@RequestMapping("/time-entries")
+public class TimeEntryController {
+    private final TimeEntryRepository timeEntriesRepo;
 
-    public TimeEntryController(TimeEntryRepository repository) {
-        this.repository = repository;
+    public TimeEntryController(TimeEntryRepository timeEntriesRepo) {
+        this.timeEntriesRepo = timeEntriesRepo;
     }
 
+    @PostMapping
     public ResponseEntity<TimeEntry> create(@RequestBody TimeEntry timeEntryToCreate) {
         return created(null)
-                .body(repository.create(timeEntryToCreate));
+                .body(timeEntriesRepo.create(timeEntryToCreate));
     }
 
-    public ResponseEntity<TimeEntry> update(@PathVariable long id, @RequestBody TimeEntry timeEntry) {
-        var timeEntryUpdated = repository.update(id, timeEntry);
-
-        return timeEntryUpdated == null ?
-                notFound().build() :
-                ok(timeEntryUpdated);
-    }
-
-    public ResponseEntity<List<TimeEntry>> list() {
-        return ok(repository.list());
-    }
-
+    @GetMapping("{id}")
     public ResponseEntity<TimeEntry> read(@PathVariable long id) {
-        var timeEntryFound = repository.find(id);
+        var timeEntryFound = timeEntriesRepo.find(id);
 
         return timeEntryFound == null ?
                 notFound().build() :
                 ok(timeEntryFound);
     }
 
+    @GetMapping
+    public ResponseEntity<List<TimeEntry>> list() {
+        return ok(timeEntriesRepo.list());
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<TimeEntry> update(@PathVariable long id, @RequestBody TimeEntry timeEntry) {
+        var timeEntryUpdated = timeEntriesRepo.update(id, timeEntry);
+
+        return timeEntryUpdated == null ?
+                notFound().build() :
+                ok(timeEntryUpdated);
+    }
+
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
-        repository.delete(id);
+        timeEntriesRepo.delete(id);
 
         return noContent().build();
     }
